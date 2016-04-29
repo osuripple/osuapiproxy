@@ -59,6 +59,6 @@ if __name__ == "__main__":
 
 	# Start server
 	print("osu!api proxy listening on 127.0.0.1:{}...".format(serverPort))
-	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/maps/(.*)", MapsHandler)])
+	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/osu/(.*)", MapsHandler)])
 	app.listen(serverPort)
 	tornado.ioloop.IOLoop.current().start()
