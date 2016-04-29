@@ -26,6 +26,24 @@ class MainHandler(tornado.web.RequestHandler):
 		# Return osu!api response
 		self.write(resp)
 
+class MapsHandler(tornado.web.RequestHandler):
+	def get(self, slug):
+		# Build URL
+		url = "https://osu.ppy.sh/osu/{}".format(slug)
+
+		# Send request to osu!api and get response
+		try:
+			resp = requests.get(url).text
+			print("Requested maps/{}".format(slug))
+		except:
+			resp = "maps error"
+			print("Error while getting maps response")
+			raise
+
+		# Return osu!api response
+		self.write(resp)
+
+
 if __name__ == "__main__":
 	# CLI stuff
 	__author__ = "Nyo"
@@ -41,6 +59,6 @@ if __name__ == "__main__":
 
 	# Start server
 	print("osu!api proxy listening on 127.0.0.1:{}...".format(serverPort))
-	app = tornado.web.Application([(r"/api/(.*)", MainHandler)])
+	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/maps/(.*)", MapsHandler)])
 	app.listen(serverPort)
 	tornado.ioloop.IOLoop.current().start()
