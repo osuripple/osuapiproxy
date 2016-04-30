@@ -5,7 +5,7 @@ import argparse
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self, slug):
-		url = "https://osu.ppy.sh/api/{}?".format(slug)
+		url = "http://osu.ppy.sh/api/{}?".format(slug)
 
 		# Build URL with all get params
 		for i in self.request.arguments:
@@ -17,23 +17,23 @@ class MainHandler(tornado.web.RequestHandler):
 		# Send request to osu!api and get response
 		try:
 			resp = requests.get(url).text
-			print("Requested api/{}".format(slug))
+			print("API request: api/{}".format(slug))
 			self.write(resp)
 		except:
 			self.send_error()
 			print("Error while getting osu!api response")
 			raise
 
-class WebHandler(tornado.web.RequestHandler):
-	def get(self, slug):
+class GeneralHandler(tornado.web.RequestHandler):
+	def get(self, what, slug):
 		# Build URL
-		url = "https://osu.ppy.sh/web/{}".format(slug)
+		url = "http://osu.ppy.sh/{}/{}".format(what, slug)
 
 		# Send request to osu!api and get response
 		try:
 			resp = requests.get(url).text
 			self.write(resp)
-			print("Requested web/{}".format(slug))
+			print("General request: {}/{}".format(what, slug))
 		except:
 			self.send_error()
 			print("Error while getting web response")
@@ -54,6 +54,6 @@ if __name__ == "__main__":
 
 	# Start server
 	print("osu!api proxy listening on 127.0.0.1:{}...".format(serverPort))
-	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/web/(.*)", WebHandler)])
+	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/(.*)/(.*)", GeneralHandler)])
 	app.listen(serverPort)
 	tornado.ioloop.IOLoop.current().start()
