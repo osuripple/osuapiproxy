@@ -18,31 +18,26 @@ class MainHandler(tornado.web.RequestHandler):
 		try:
 			resp = requests.get(url).text
 			print("Requested api/{}".format(slug))
+			self.write(resp)
 		except:
-			resp = "osu!api error"
+			self.send_error()
 			print("Error while getting osu!api response")
 			raise
 
-		# Return osu!api response
-		self.write(resp)
-
-class MapsHandler(tornado.web.RequestHandler):
+class WebHandler(tornado.web.RequestHandler):
 	def get(self, slug):
 		# Build URL
-		url = "https://osu.ppy.sh/osu/{}".format(slug)
+		url = "https://osu.ppy.sh/web/{}".format(slug)
 
 		# Send request to osu!api and get response
 		try:
 			resp = requests.get(url).text
-			print("Requested maps/{}".format(slug))
+			self.write(resp)
+			print("Requested web/{}".format(slug))
 		except:
-			resp = "maps error"
-			print("Error while getting maps response")
+			self.send_error()
+			print("Error while getting web response")
 			raise
-
-		# Return osu!api response
-		self.write(resp)
-
 
 if __name__ == "__main__":
 	# CLI stuff
@@ -59,6 +54,6 @@ if __name__ == "__main__":
 
 	# Start server
 	print("osu!api proxy listening on 127.0.0.1:{}...".format(serverPort))
-	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/osu/(.*)", MapsHandler)])
+	app = tornado.web.Application([(r"/api/(.*)", MainHandler), (r"/web/(.*)", WebHandler)])
 	app.listen(serverPort)
 	tornado.ioloop.IOLoop.current().start()
